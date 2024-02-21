@@ -4,12 +4,12 @@
     "slug": "weather-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/qr-logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/qr_splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#598090"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,12 +19,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/qr-logo.png",
+        "backgroundColor": "#598090"
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/qr-logo.png"
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
