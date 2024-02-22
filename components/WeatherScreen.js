@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, Text, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import WeatherItem from "./WeatherItem";
+import Arrow from "react-native-vector-icons/Ionicons";
+import Del from "react-native-vector-icons/Feather";
+import Spinner from "./Spinner";
 
-const WeatherScreen = ({ navigation }) => {
+const WeatherScreen = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [savedLocations, setSavedLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [weatherDataLoading, setWeatherDataLoading] = useState(false);
 
   useEffect(() => {
     fetchSavedLocations();
@@ -18,24 +28,19 @@ const WeatherScreen = ({ navigation }) => {
     }
   }, [selectedLocation]);
 
-  const fetchSavedLocations = async () => {
+  const removeWord = async (location) => {
     try {
-      const savedLocationsJSON = await AsyncStorage.getItem("scannedSaveData");
-      if (savedLocationsJSON) {
-        const locations = JSON.parse(savedLocationsJSON);
-        setSavedLocations(locations);
-        if (locations.length > 0) {
-          setSelectedLocation(locations[0]);
-        }
-      } else {
-        // Если данных нет, устанавливаем "Moscow,Ru" по умолчанию
-        setSavedLocations(["Moscow,Ru"]);
-        setSelectedLocation("Moscow,Ru");
-      }
+      const updatedWords = savedLocations.filter((item) => item !== location);
+      setSavedLocations(updatedWords);
+      await AsyncStorage.setItem(
+        "scannedSaveData",
+        JSON.stringify(updatedWords)
+      );
     } catch (error) {
-      console.error("Error fetching saved locations:", error);
+      console.error("Error removing word:", error);
     }
   };
+
   const fetchWeatherData = async (location) => {
     try {
       const response = await fetch(
@@ -47,41 +52,106 @@ const WeatherScreen = ({ navigation }) => {
       console.error("Error fetching weather data:", error);
     }
   };
-
-  const handleLocationPress = (location) => {
-    setSelectedLocation(location);
+  const handleNoSavedLocations = async () => {
+    try {
+      const defaultLocation = "Moscow,Ru";
+      await fetchWeatherData(defaultLocation);
+      setSelectedLocation(defaultLocation);
+    } catch (error) {
+      console.error("Error handling no saved locations:", error);
+    }
   };
 
-  if (!weatherData) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Image
-          source={require("../assets/qr_spinner.gif")}
-          style={{
-            width: 100,
-            height: 200,
-            resizeMode: "contain",
-            alignItems: "center",
-          }}
-        />
-      </View>
-    );
+  const fetchSavedLocations = async () => {
+    try {
+      const savedLocationsJSON = await AsyncStorage.getItem("scannedSaveData");
+      if (savedLocationsJSON) {
+        const locations = JSON.parse(savedLocationsJSON);
+        setSavedLocations(locations);
+        if (locations.length > 0) {
+          setSelectedLocation(locations[0]);
+          fetchWeatherData(locations[0]);
+        } else {
+          handleNoSavedLocations();
+        }
+      } else {
+        handleNoSavedLocations();
+      }
+    } catch (error) {
+      console.error("Error fetching saved locations:", error);
+    }
+  };
+  const handleLocationPress = (location) => {
+    setWeatherData(null);
+    setSelectedLocation(null);
+    setWeatherDataLoading(true);
+    fetchWeatherData(location)
+      .then(() => {
+        setSelectedLocation(location);
+        setWeatherDataLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching weather data:", error);
+        setWeatherDataLoading(false);
+      });
+  };
+
+  if (weatherDataLoading || !weatherData) {
+    return <Spinner source={require("../assets/qr_spinner.gif")} />;
   }
 
   const { days } = weatherData;
 
   return (
     <View style={styles.container}>
-      <FlatList
-        horizontal
-        data={savedLocations}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleLocationPress(item)}>
-            <Text style={selectedLocation === item ? styles.selectedLocationText : styles.locationText}>{item}</Text>
-          </TouchableOpacity>
+      <View style={styles.containerList}>
+        {savedLocations.length > 2 && (
+          <Text>
+            <Arrow name="arrow-back" size={20} color="#faedcd" />
+          </Text>
         )}
-        keyExtractor={(item, index) => item.datetime + index.toString()} // Объединяем datetime и индекс
+
+        <FlatList
+          style={styles.listButton}
+          horizontal
+          data={savedLocations.length > 0 ? savedLocations : ["Moscow,Ru"]}
+          renderItem={({ item }) => (
+            <>
+              <TouchableOpacity
+                onPress={() => handleLocationPress(item)}
+                style={styles.buttonContainer}
+              >
+                <Text
+                  style={
+                    selectedLocation === item
+                      ? styles.selectedLocationText
+                      : styles.locationText
+                  }
+                >
+                  {item}
+                </Text>
+              </TouchableOpacity>
+
+              {savedLocations.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => removeWord(item)}
+                  style={styles.buttonContainerDel}
+                >
+                  <Text>
+                    <Del name="delete" size={20} color="#313857" />
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+          keyExtractor={( index ) => index.toString()}
         />
+        {savedLocations.length > 2 && (
+          <Text>
+            <Arrow name="arrow-forward" size={20} color="#faedcd" />
+          </Text>
+        )}
+      </View>
 
       <FlatList
         data={days}
@@ -96,26 +166,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#598090",
-    padding: 10,
   },
   locationText: {
-    fontFamily: "first",
-    color: "#faedcd",
-    fontSize: 20,
-    marginRight: 10,
+    fontFamily: "second",
+    color: "#598090",
+    fontSize: 23,
   },
   selectedLocationText: {
-    fontFamily: "first",
-    color: "#faedcd",
-    fontSize: 20,
-    marginRight: 10,
-    textDecorationLine: 'underline',
+    fontFamily: "second",
+    color: "#bb7b85",
+    fontSize: 23,
+    textShadowColor: "#598090",
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 5,
   },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: "#598090",
+  buttonContainer: {
+    backgroundColor: "#faedcd",
+    padding: 5,
+    borderRadius: 10,
+    margin: 5,
+  },
+  containerList: {
+    display: "flex",
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    marginTop: 10,
+  },
+  buttonContainerDel: {
+    alignItems: "center",
+    backgroundColor: "#faedcd",
+    padding: 5,
+    paddingTop: 10,
+    borderRadius: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    marginRight: 10,
   },
 });
 

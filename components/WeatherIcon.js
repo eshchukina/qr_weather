@@ -1,5 +1,5 @@
 import React from "react";
-import { View , StyleSheet} from "react-native";
+import { View, StyleSheet } from "react-native";
 import Snow from "react-native-vector-icons/FontAwesome";
 import Thunder from "react-native-vector-icons/Ionicons";
 import Rain from "react-native-vector-icons/Ionicons";
@@ -20,7 +20,9 @@ const WeatherIcon = ({ icon }) => {
     case "thunder-rain":
     case "thunder-showers-day":
     case "thunder-showers-night":
-      iconComponent = <Thunder name="thunderstorm-sharp" size={40} color="#bb7b85" />;
+      iconComponent = (
+        <Thunder name="thunderstorm-sharp" size={40} color="#bb7b85" />
+      );
       break;
     case "rain":
     case "showers-day":
@@ -49,8 +51,8 @@ const WeatherIcon = ({ icon }) => {
   return <View style={styles.iconContainer}>{iconComponent}</View>;
 };
 const styles = StyleSheet.create({
-    iconContainer: {
-        marginTop: 10,
-      },
-  });
+  iconContainer: {
+    marginTop: 10,
+  },
+});
 export default WeatherIcon;
