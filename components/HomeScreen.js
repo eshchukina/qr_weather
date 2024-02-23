@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { Camera } from "expo-camera";
 import ModalWindow from "./ModalWindow";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 import Icon from "react-native-vector-icons/Ionicons";
 import Map from "react-native-vector-icons/MaterialCommunityIcons";
@@ -24,7 +25,7 @@ function HomeScreen({ navigation }) {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync();
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -98,12 +99,16 @@ function HomeScreen({ navigation }) {
         {showScanner ? (
           <>
             <View style={styles.cameraContainer}>
-              <Camera
-                ref={cameraRef}
-                style={styles.camera}
-                type={Camera.Constants.Type.back}
-                onBarCodeScanned={handleBarCodeScanned}
-              />
+            <Camera
+  barCodeScannerSettings={{
+    barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr]
+  }}
+  onBarCodeScanned={handleBarCodeScanned} // Используйте правильное имя функции
+  ref={cameraRef}
+  style={styles.camera}
+  type={Camera.Constants.Type.back}
+/>
+
             </View>
           </>
         ) : (

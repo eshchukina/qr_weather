@@ -1,33 +1,47 @@
 {
   "expo": {
-    "name": "weather-app",
+    "name": "QRweather",
     "slug": "weather-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/qr-logo.png",
-    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/qr_splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#598090"
     },
-    "assetBundlePatterns": [
-      "**/*"
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "plugins": [
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow QRweather to access your camera.",
+          "microphonePermission": "Allow QRweather to access your microphone."
+        }
+      ]
     ],
+
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "package": "com.frankkat.weatherapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/qr-logo.png",
         "backgroundColor": "#598090"
-      }
+      },
+      "scheme": "flashcards",
+      "permissions": ["CAMERA"]
     },
     "web": {
       "favicon": "./assets/qr-logo.png"
     },
-    "plugins": [
-      "expo-font"
-    ]
+    "extra": {
+      "eas": {
+        "projectId": "cae2a9af-b3a5-44ad-8f46-eb5245813ee8"
+      }
+    }
   }
 }
