@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View, Text, FlatList, TouchableOpacity,
-} from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import WeatherItem from "../WeatherItem";
 import Arrow from "react-native-vector-icons/Ionicons";
@@ -80,7 +78,7 @@ const WeatherScreen = () => {
       console.error("Error fetching saved locations:", error);
     }
   };
-  
+
   const handleLocationPress = (location) => {
     setWeatherData(null);
     setSelectedLocation(null);
@@ -144,7 +142,7 @@ const WeatherScreen = () => {
               )}
             </>
           )}
-          keyExtractor={( index ) => index.toString()}
+          keyExtractor={(index) => index.toString()}
         />
         {savedLocations.length > 2 && (
           <Text>
@@ -161,7 +159,5 @@ const WeatherScreen = () => {
     </View>
   );
 };
-
-
 
 export default WeatherScreen;
