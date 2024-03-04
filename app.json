@@ -4,9 +4,9 @@
     "slug": "weather-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/qr-logo.png",
+    "icon": "./assets/images/qr-logo.png",
     "splash": {
-      "image": "./assets/qr_splash.png",
+      "image": "./assets/images/qr_splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#598090"
     },
@@ -29,14 +29,14 @@
     "android": {
       "package": "com.frankkat.weatherapp",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/qr-logo.png",
+        "foregroundImage": "./assets/images/qr-logo.png",
         "backgroundColor": "#598090"
       },
       "scheme": "flashcards",
       "permissions": ["CAMERA"]
     },
     "web": {
-      "favicon": "./assets/qr-logo.png"
+      "favicon": "./assets/images/qr-logo.png"
     },
     "extra": {
       "eas": {

@@ -1,34 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
-import { Camera } from "expo-camera";
-import ModalWindow from "./ModalWindow";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import ModalWindow from "../ModalWindow";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { BarCodeScanner } from 'expo-barcode-scanner';
-
+import Scanner from "../Scanner";
 import Icon from "react-native-vector-icons/Ionicons";
 import Map from "react-native-vector-icons/MaterialCommunityIcons";
 import Close from "react-native-vector-icons/AntDesign";
 import Location from "react-native-vector-icons/MaterialIcons";
 
+import styles from "./styles";
+
 function HomeScreen({ navigation }) {
-  const [hasPermission, setHasPermission] = useState(null);
   const [showScanner, setShowScanner] = useState(false);
   const [scannedData, setScannedData] = useState("");
   const [scannedSaveData, setScannedSaveData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleToggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
-
-  const cameraRef = useRef(null);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,11 +24,13 @@ function HomeScreen({ navigation }) {
         const savedDataArray = JSON.parse(savedDataJSON);
         setScannedSaveData(savedDataArray);
       }
-      //   console.log(savedDataJSON);
     };
-
     fetchData();
   }, []);
+
+ const handleToggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
 
   const handleToggleScanner = () => {
     setShowScanner(!showScanner);
@@ -49,35 +38,19 @@ function HomeScreen({ navigation }) {
 
   const handleBarCodeScanned = async ({ data }) => {
     setScannedData(data);
-
     let updatedData = [...new Set([...scannedSaveData, data])];
     updatedData = updatedData.slice(-10);
-
     setScannedSaveData(updatedData);
     await AsyncStorage.setItem("scannedSaveData", JSON.stringify(updatedData));
     setShowScanner(false);
   };
 
-  if (hasPermission === null) {
-    return (
-      <Text style={styles.dataText}>Requesting for camera permission</Text>
-    );
-  }
-
-  if (hasPermission === false) {
-    return <Text style={styles.dataText}>No access to camera</Text>;
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../assets/qr_logoText.png")}
-          style={{
-            width: 50,
-            height: 50,
-            resizeMode: "contain",
-          }}
+          source={require("../../assets/images/qr_logoText.png")}
+          style={styles.logoContainer}
         />
         <TouchableOpacity
           style={styles.buttonContainerHeader}
@@ -99,16 +72,9 @@ function HomeScreen({ navigation }) {
         {showScanner ? (
           <>
             <View style={styles.cameraContainer}>
-            <Camera
-  barCodeScannerSettings={{
-    barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr]
-  }}
-  onBarCodeScanned={handleBarCodeScanned} // Используйте правильное имя функции
-  ref={cameraRef}
-  style={styles.camera}
-  type={Camera.Constants.Type.back}
-/>
-
+              <Scanner
+                    onBarCodeScanned={handleBarCodeScanned} 
+              />
             </View>
           </>
         ) : (
@@ -153,74 +119,5 @@ function HomeScreen({ navigation }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "#598090",
-  },
-  containerItem: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  cameraContainer: {
-    borderRadius: 20,
-    overflow: "hidden",
-    width: 305,
-    height: 305,
-  },
-  camera: {
-    flex: 1,
-  },
-  dataText: {
-    fontFamily: "first",
-    color: "#faedcd",
-    fontSize: 20,
-    textAlign: "center",
-  },
-  dataTextContainer: {
-    alignItems: "center",
-    display: "flex",
-  },
-  buttonContainer: {
-    backgroundColor: "#faedcd",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  buttonContainerHeader: {
-    backgroundColor: "#313857",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  buttonContainerText: {
-    fontFamily: "second",
-    color: "#bb7b85",
-    fontSize: 25,
-    textShadowColor: "#598090",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 5,
-  },
-  qrImage: {
-    textShadowColor: "#edbabc",
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 5,
-  },
-  imageContainer: {
-    paddingTop: 0,
-    paddingBottom: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "90%",
-  },
-});
 
 export default HomeScreen;

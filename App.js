@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View } from "react-native";
 import AppNavigator from "./components/AppNavigator";
 import * as Font from "expo-font";
 import Spinner from "./components/Spinner";
@@ -12,8 +12,8 @@ export default function App() {
     async function loadFonts() {
       try {
         await Font.loadAsync({
-          first: require("./assets/Sarabun-Regular.ttf"),
-          second: require("./assets/Satisfy-Regular.ttf"),
+          first: require("./assets/fonts/Sarabun-Regular.ttf"),
+          second: require("./assets/fonts/Satisfy-Regular.ttf"),
         });
         setFontsLoaded(true);
       } catch (error) {
@@ -24,7 +24,7 @@ export default function App() {
   }, []);
 
   if (!fontsLoaded) {
-    return <Spinner source={require("./assets/qr_spinner.gif")} />;
+    return <Spinner source={require("./assets/images/qr_spinner.gif")} />;
   }
   return (
     <View style={styles.container}>

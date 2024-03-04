@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import Snow from "react-native-vector-icons/FontAwesome";
 import Thunder from "react-native-vector-icons/Ionicons";
 import Rain from "react-native-vector-icons/Ionicons";
@@ -7,6 +7,8 @@ import Fog from "react-native-vector-icons/Fontisto";
 import Wind from "react-native-vector-icons/FontAwesome5";
 import Cloud from "react-native-vector-icons/Ionicons";
 import Sun from "react-native-vector-icons/Ionicons";
+
+import styles from "./styles";
 
 const WeatherIcon = ({ icon }) => {
   let iconComponent = null;
@@ -50,9 +52,5 @@ const WeatherIcon = ({ icon }) => {
 
   return <View style={styles.iconContainer}>{iconComponent}</View>;
 };
-const styles = StyleSheet.create({
-  iconContainer: {
-    marginTop: 10,
-  },
-});
+
 export default WeatherIcon;

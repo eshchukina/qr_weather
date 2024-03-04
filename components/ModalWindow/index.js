@@ -1,7 +1,9 @@
 import React from "react";
-import { Modal, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import Map from "react-native-vector-icons/SimpleLineIcons";
+
+import styles from "./styles";
 
 const ModalWindow = ({ visible, onClose }) => {
   return (
@@ -9,7 +11,6 @@ const ModalWindow = ({ visible, onClose }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text>
-            {" "}
             <Map name="map" size={40} color="#bb7b85" />
           </Text>
           <View style={styles.textDescriptionContainer}>
@@ -51,30 +52,5 @@ const ModalWindow = ({ visible, onClose }) => {
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#edbabc",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  textDescriptionContainer: {
-    justifyContent: "space-around",
-  },
-  textDescription: {
-    textAlign: "center",
-    fontSize: 16,
-    fontFamily: "first",
-    padding: 5,
-    color: "#313857",
-  },
-});
 
 export default ModalWindow;

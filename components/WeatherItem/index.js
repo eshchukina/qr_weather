@@ -1,11 +1,14 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import WeatherIcon from "./WeatherIcon";
+import { View, Text } from "react-native";
+import WeatherIcon from "../WeatherIcon";
+
+import styles from "./styles";
 
 const WeatherItem = ({ item }) => {
   const convertToFahrenheitToCelsius = (fahrenheit) => {
     return Math.round(((fahrenheit - 32) * 5) / 9);
   };
+
   return (
     <View style={styles.item}>
       <Text style={styles.textItem}>Date: {item.datetime}</Text>
@@ -50,31 +53,5 @@ const WeatherItem = ({ item }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  item: {
-    backgroundColor: "#313857",
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 20,
-  },
-  textItem: {
-    padding: 2,
-    fontFamily: "first",
-    fontSize: 15,
-    color: "#edbabc",
-  },
-  textItemData: {
-    padding: 2,
-    fontFamily: "first",
-    fontSize: 15,
-    color: "#bb7b85",
-  },
-  textItemContainer: {
-    display: "flex",
-    flexDirection: "row",
-  },
-});
 
 export default WeatherItem;
